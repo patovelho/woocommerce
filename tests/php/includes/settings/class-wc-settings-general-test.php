@@ -22,8 +22,9 @@ class WC_Settings_General_Test extends WC_Settings_Unit_Test_Case {
 
 		add_filter(
 			'woocommerce_general_settings',
-			function( $settings ) use ( &$actual_settings ) {
-				$actual_settings = $settings;
+			function( $settings ) use ( &$actual_settings_via_filter ) {
+				$actual_settings_via_filter = $settings;
+				return $settings;
 			},
 			10,
 			1
@@ -43,12 +44,8 @@ class WC_Settings_General_Test extends WC_Settings_Unit_Test_Case {
 	public function test_get_settings__all_settings_are_present() {
 		$sut = new WC_Settings_General();
 
-		$settings = $sut->get_settings();
-
-		$settings_ids_and_types = array();
-		foreach ( $settings as $setting ) {
-			$settings_ids_and_types[ $setting['id'] ] = $setting['type'];
-		}
+		$settings               = $sut->get_settings();
+		$settings_ids_and_types = $this->get_ids_and_types( $settings );
 
 		$expected = array(
 			'store_address'                           => 'title',
